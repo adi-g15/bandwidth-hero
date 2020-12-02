@@ -1,7 +1,10 @@
 ![Bandwidth Hero](https://raw.githubusercontent.com/ayastreb/bandwidth-hero/master/src/assets/logo.png)
 
+Just an updated fork of the [original repo](https://github.com/ayastreb/bandwidth-hero)
+
 [![Build Status](https://travis-ci.org/ayastreb/bandwidth-hero.svg?branch=master)](https://travis-ci.org/ayastreb/bandwidth-hero)
-[![Code Climate](https://codeclimate.com/github/ayastreb/bandwidth-hero/badges/gpa.svg)](https://codeclimate.com/github/ayastreb/bandwidth-hero)
+
+[![CodeFactor](https://www.codefactor.io/repository/github/silentwatcher3/bandwidth-hero/badge)](https://www.codefactor.io/repository/github/silentwatcher3/bandwidth-hero)
 
 Bandwidth Hero is an open-source browser extension which reduces the amount of data consumed when
 you browse web pages by compressing all images on the page. It uses
