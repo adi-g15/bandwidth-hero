@@ -9,7 +9,7 @@ import {
   Accordion
 } from 'semantic-ui-react'
 import Header from '../components/Header'
-import axios from 'axios'
+import { INIT_MESSAGE } from "../constants/data_service";
 
 export default class Setup extends React.Component {
   constructor(props) {
@@ -31,17 +31,24 @@ export default class Setup extends React.Component {
       this.setState({ isValid: false })
     } else {
       this.setState({ isLoading: true })
-      axios
-        .get(this.state.proxyUrl)
-        .then(res => {
-          if (res.status !== 200 || res.data !== 'bandwidth-hero-proxy')
+
+      fetch(this.state.proxyUrl)
+        .then(async res => {
+          const data = await res.text();
+          if (!res.ok || data !== INIT_MESSAGE)
             throw new Error()
 
-          this.setState({ isLoading: false, isValid: true })
+          this.setState({
+            isLoading: false,
+            isValid: true
+          })
           const localState = { ...this.props, proxyUrl: this.state.proxyUrl }
           chrome.storage.local.set(localState)
         })
-        .catch(err => this.setState({ isLoading: false, isValid: false }))
+        .catch(err => this.setState({
+          isLoading: false,
+          isValid: false
+        }))
     }
   }, 600)
 

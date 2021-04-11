@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import Header from '../components/Header'
 import Home from '../components/Home'
@@ -6,116 +6,110 @@ import Footer from '../components/Footer'
 import parseUrl from '../utils/parseUrl'
 import defaults from '../defaults'
 
-export default class Popup extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      enabled: props.enabled,
-      statistics: props.statistics,
-      disabledHosts: props.disabledHosts,
-      convertBw: props.convertBw,
-      compressionLevel: props.compressionLevel,
-      isWebpSupported: props.isWebpSupported,
-      proxyUrl: props.proxyUrl
+export default function Popup(props) {
+  const [enabled, setEnabled] = useState(props.enabled);
+  const [statistics, setstatistics] = useState(props.statistics);
+  const [disabledHosts, setdisabledHosts] = useState(props.disabledHosts);
+  const [convertBw, setconvertBw] = useState(props.convertBw);
+  const [compressionLevel, setcompressionLevel] = useState(props.compressionLevel);
+  const [isWebpSupported, setisWebpSupported] = useState(props.isWebpSupported);
+  const [proxyUrl, setproxyUrl] = useState(props.proxyUrl);
+
+  // @NOTE @BUG (Can be) - Note that this code was in the constructor, and should be well off here, though consider it moving out of inside useEffect
+  useEffect(() => {
+    if (!chrome.storage.onChanged.hasListener(stateWasUpdatedFromBackground)) {
+      chrome.storage.onChanged.addListener(stateWasUpdatedFromBackground);
     }
-    if(!chrome.storage.onChanged.hasListener(this.stateWasUpdatedFromBackground)){
-        chrome.storage.onChanged.addListener(this.stateWasUpdatedFromBackground);
-    }
+  }, [])
+
+  function enableSwitchWasChanged() {
+    chrome.set.local.set({ enabled: !enabled });
+    setEnabled(enabled => !enabled);
   }
 
-  enableSwitchWasChanged = () => {
-    this.setState(prevState => {
-        let enabled = { enabled: !prevState.enabled }
-        chrome.storage.local.set(enabled)
-        return enabled
-      }
-    )
+  function siteWasDisabled() {
+    const { hostname } = parseUrl(props.currentUrl);
+    chrome.storage.local.set({ disabledHosts: disabledHosts.concat(hostname) });
+    setdisabledHosts(disabledHosts => disabledHosts.concat(hostname))
   }
 
-  siteWasDisabled = () => {
-    const { hostname } = parseUrl(this.props.currentUrl)
-    this.setState(
-      prevState => {
-          let disabledHosts = {disabledHosts: prevState.disabledHosts.concat(hostname)}
-          chrome.storage.local.set(disabledHosts)
-          return disabledHosts
-      }
-    )
+  function siteWasEnabled() {
+    const { hostname } = parseUrl(props.currentUrl);
+    chrome.storage.local.set({ disabledHosts: disabledHosts.filter(site => site !== hostname) });
+    setdisabledHosts(disabledHosts => disabledHosts.filter(site => site !== hostname));
   }
 
-  siteWasEnabled = () => {
-    const { hostname } = parseUrl(this.props.currentUrl)
-    this.setState(
-      prevState => {
-        let disabledHosts = {disabledHosts: prevState.disabledHosts.filter(site => site !== hostname)}
-        chrome.storage.local.set(disabledHosts)
-        return disabledHosts
-      }
-    )
+  function disabledHostsWasChanged(_, { value }) {
+    chrome.storage.local.set({ disabledHosts: value.split('\n') })
+    setdisabledHosts(value.split('\n'));
   }
 
-  disabledHostsWasChanged = (_, { value }) => {
-    this.setState(() => {
-        let disabledHosts = { disabledHosts: value.split('\n') }
-        chrome.storage.local.set(disabledHosts)
-        return disabledHosts
-      }
-    )
+  function convertBwWasChanged() {
+    chrome.storage.local.set({ convertBw: !convertBw });
+    setconvertBw(convertBw => !convertBw);
   }
 
-  convertBwWasChanged = () => {
-    this.setState(prevState => {
-        let convertBw = { convertBw: !prevState.convertBw }
-        chrome.storage.local.set(convertBw)
-        return convertBw
-      }
-    )
+  function compressionLevelWasChanged(_, { value }) {
+    chrome.storage.local.set({ compressionLevel: value });
+    setcompressionLevel(value);
   }
 
-  compressionLevelWasChanged = (_, { value }) => {
-    this.setState(() => {
-        let compressionLvl = {compressionLevel: value }
-        chrome.storage.local.set(compressionLvl)
-        return compressionLvl
-      }
-    )
-  }
 
   /**
-   * Receive state changes from background process and update UI.
-   */
-  stateWasUpdatedFromBackground = changes => {
-    var changedItems = Object.keys(changes)
-    for (var item of changedItems) {
-        if( this.state[item] !== changes[item].newValue){
-            this.setState( { [item]: changes[item].newValue } )
-        }
+ * Receive state changes from background process and update UI.
+ */
+  function stateWasUpdatedFromBackground(changes) {
+    if (changes["enabled"]) {
+      setEnabled(changes["enabled"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["statistics"]) {
+      setstatistics(changes["statistics"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["disabledHosts"]) {
+      setdisabledHosts(changes["disabledHosts"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["convertBw"]) {
+      setconvertBw(changes["convertBw"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["compressionLevel"]) {
+      setcompressionLevel(changes["compressionLevel"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["isWebpSupported"]) {
+      setisWebpSupported(changes["isWebpSupported"].newValue); // if not different, then no repaint will be done
+    }
+    if (changes["proxyUrl"]) {
+      setproxyUrl(changes["proxyUrl"].newValue); // if not different, then no repaint will be done
     }
   }
 
-  render() {
-    return (
-      <Router>
-        <div>
-          <Header enabled={this.state.enabled} onChange={this.enableSwitchWasChanged} />
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <Home
-                {...this.state}
-                currentUrl={this.props.currentUrl}
-                onSiteDisable={this.siteWasDisabled}
-                onSiteEnable={this.siteWasEnabled}
-                disabledOnChange={this.disabledHostsWasChanged}
-                convertBwOnChange={this.convertBwWasChanged}
-                compressionLevelOnChange={this.compressionLevelWasChanged}
-              />
-            )}
-          />
-          <Footer />
-        </div>
-      </Router>
-    )
-  }
+  return (
+    <Router>
+      <div>
+        <Header enabled={enabled} onChange={enableSwitchWasChanged} />
+        <Route
+          exact
+          path="/"
+          render={() => (
+            <Home
+              enabled={enabled}
+              statistics={statistics}
+              disabledHosts={disabledHosts}
+              convertBw={convertBw}
+              compressionLevel={compressionLevel}
+              isWebpSupported={isWebpSupported}
+              proxyUrl={proxyUrl}
+              currentUrl={props.currentUrl}
+              onSiteDisable={siteWasDisabled}
+              onSiteEnable={siteWasEnabled}
+              disabledOnChange={disabledHostsWasChanged}
+              convertBwOnChange={convertBwWasChanged}
+              compressionLevelOnChange={compressionLevelWasChanged}
+            />
+          )}
+        />
+        <Footer />
+      </div>
+    </Router>
+  )
+
 }

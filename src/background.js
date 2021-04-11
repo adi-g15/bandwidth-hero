@@ -4,7 +4,6 @@ import getHeaderValue from './background/getHeaderIntValue'
 import parseUrl from './utils/parseUrl'
 import deferredStateStorage from './utils/deferredStateStorage'
 import defaultState from './defaults'
-import axios from 'axios'
 import isPrivateNetwork from './background/isPrivateNetwork';
 
 chrome.storage.local.get(storedState => {
@@ -129,26 +128,32 @@ chrome.storage.local.get(storedState => {
             compressed.add(url)
             const redirectUrl = buildCompressUrl(url);
 
-            if (!isFirefox()) return { redirectUrl }
             // Firefox allows onBeforeRequest event listener to return a Promise
             // and perform redirect when this Promise is resolved.
             // This allows us to run HEAD request before redirecting to compression
             // to make sure that the image should be compressed.
-            return axios.head(url).then(res => {
-                if (
-                    res.status === 200 &&
-                    res.headers['content-length'] > 1024 &&
-                    res.headers['content-type'] &&
-                    res.headers['content-type'].startsWith('image')
-                ) {
-                    return { redirectUrl }
-                }
-            }).catch(error => {
-                if(error.response.status === 405)//HEAD method not allowed
-                {
-                    return { redirectUrl }
-                }
-            })
+            if (isFirefox()) {
+                return fetch(url, {
+                    method: "HEAD"
+                })
+                .then(res => {
+                    if (
+                        res.status === 200 &&
+                        res.headers.get('content-length') > 1024 &&
+                        res.headers.get('content-type') &&
+                        res.headers.get('content-type').startsWith('image')
+                    ) {
+                        return { redirectUrl }
+                    }
+                }).catch(error => {
+                    if(error.response.status === 405)//HEAD method not allowed
+                    {
+                        return { redirectUrl }
+                    }
+                })
+            } else {
+                return { redirectUrl }
+            }
         }
     }
 

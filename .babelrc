@@ -1,17 +1,3 @@
 {
-  "presets": ["@babel/preset-env", ["react-app", { "absoluteRuntime": false }]],
-  "env": {
-    "test": {
-      "presets": [
-        [
-          "@babel/preset-env",
-          {
-            "targets": {
-              "node": "current"
-            }
-          }
-        ]
-      ]
-    }
-  }
+  "presets": ["@babel/preset-env", ["react-app", { "absoluteRuntime": false }]]
 }

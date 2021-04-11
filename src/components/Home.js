@@ -3,7 +3,7 @@ import UsageStatistic from './UsageStatistic'
 import DisableButton from './DisableButton'
 import SettingsAccordion from './SettingsAccordion'
 
-export default ({
+export default function Home({
   statistics,
   disabledHosts,
   currentUrl,
@@ -15,27 +15,29 @@ export default ({
   convertBwOnChange,
   isWebpSupported,
   compressionLevelOnChange
-}) => (
-  <div>
-    <UsageStatistic
-      filesProcessed={statistics.filesProcessed}
-      bytesProcessed={statistics.bytesProcessed}
-      bytesSaved={statistics.bytesSaved}
-    />
-    <DisableButton
-      disabledHosts={disabledHosts}
-      currentUrl={currentUrl}
-      onSiteDisable={onSiteDisable}
-      onSiteEnable={onSiteEnable}
-    />
-    <SettingsAccordion
-      disabledHosts={disabledHosts}
-      convertBw={convertBw}
-      isWebpSupported={isWebpSupported}
-      compressionLevel={compressionLevel}
-      disabledOnChange={disabledOnChange}
-      convertBwOnChange={convertBwOnChange}
-      compressionLevelOnChange={compressionLevelOnChange}
-    />
-  </div>
-)
+}) {
+  return (
+    <div>
+      <UsageStatistic
+        filesProcessed={statistics.filesProcessed}
+        bytesProcessed={statistics.bytesProcessed}
+        bytesSaved={statistics.bytesSaved}
+      />
+      <DisableButton
+        disabledHosts={disabledHosts}
+        currentUrl={currentUrl}
+        onSiteDisable={onSiteDisable}
+        onSiteEnable={onSiteEnable}
+      />
+      <SettingsAccordion
+        disabledHosts={disabledHosts}
+        convertBw={convertBw}
+        isWebpSupported={isWebpSupported}
+        compressionLevel={compressionLevel}
+        disabledOnChange={disabledOnChange}
+        convertBwOnChange={convertBwOnChange}
+        compressionLevelOnChange={compressionLevelOnChange}
+      />
+    </div>
+  );
+}

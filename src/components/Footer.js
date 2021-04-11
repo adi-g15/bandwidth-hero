@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Container } from 'semantic-ui-react'
 
-export default () => {
+export default function Footer() {
   return (
     <Container className="footer" textAlign="right">
       <Button
@@ -13,11 +13,10 @@ export default () => {
       />
       <Button
         basic
-        color="orange"
-        href="https://paypal.me/ayastreb"
+        href="https://github.com/adi-g15/bandwidth-hero"
         target="_blank"
-        content="Donate!"
-        icon="heart outline"
+        content="Repo"
+        positive
       />
     </Container>
   )
