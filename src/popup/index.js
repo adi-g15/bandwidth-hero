@@ -9,50 +9,11 @@ import defaults from '../defaults'
 export default function Popup(props) {
   const [enabled, setEnabled] = useState(props.enabled);
   const [statistics, setstatistics] = useState(props.statistics);
-  const [disabledHosts, setdisabledHosts] = useState(props.disabledHosts);
+  const [enabledHosts, setEnabledHosts] = useState(props.enabledHosts);
   const [convertBw, setconvertBw] = useState(props.convertBw);
   const [compressionLevel, setcompressionLevel] = useState(props.compressionLevel);
   const [isWebpSupported, setisWebpSupported] = useState(props.isWebpSupported);
   const [proxyUrl, setproxyUrl] = useState(props.proxyUrl);
-
-  // @NOTE @BUG (Can be) - Note that this code was in the constructor, and should be well off here, though consider it moving out of inside useEffect
-  useEffect(() => {
-    if (!chrome.storage.onChanged.hasListener(stateWasUpdatedFromBackground)) {
-      chrome.storage.onChanged.addListener(stateWasUpdatedFromBackground);
-    }
-  }, [])
-
-  function enableSwitchWasChanged() {
-    chrome.set.local.set({ enabled: !enabled });
-    setEnabled(enabled => !enabled);
-  }
-
-  function siteWasDisabled() {
-    const { hostname } = parseUrl(props.currentUrl);
-    chrome.storage.local.set({ disabledHosts: disabledHosts.concat(hostname) });
-    setdisabledHosts(disabledHosts => disabledHosts.concat(hostname))
-  }
-
-  function siteWasEnabled() {
-    const { hostname } = parseUrl(props.currentUrl);
-    chrome.storage.local.set({ disabledHosts: disabledHosts.filter(site => site !== hostname) });
-    setdisabledHosts(disabledHosts => disabledHosts.filter(site => site !== hostname));
-  }
-
-  function disabledHostsWasChanged(_, { value }) {
-    chrome.storage.local.set({ disabledHosts: value.split('\n') })
-    setdisabledHosts(value.split('\n'));
-  }
-
-  function convertBwWasChanged() {
-    chrome.storage.local.set({ convertBw: !convertBw });
-    setconvertBw(convertBw => !convertBw);
-  }
-
-  function compressionLevelWasChanged(_, { value }) {
-    chrome.storage.local.set({ compressionLevel: value });
-    setcompressionLevel(value);
-  }
 
 
   /**
@@ -65,8 +26,8 @@ export default function Popup(props) {
     if (changes["statistics"]) {
       setstatistics(changes["statistics"].newValue); // if not different, then no repaint will be done
     }
-    if (changes["disabledHosts"]) {
-      setdisabledHosts(changes["disabledHosts"].newValue); // if not different, then no repaint will be done
+    if (changes["enabledHosts"]) {
+      setEnabledHosts(changes["enabledHosts"].newValue); // if not different, then no repaint will be done
     }
     if (changes["convertBw"]) {
       setconvertBw(changes["convertBw"].newValue); // if not different, then no repaint will be done
@@ -82,6 +43,46 @@ export default function Popup(props) {
     }
   }
 
+
+  // @NOTE @BUG (Can be) - Note that this code was in the constructor, and should be well off here, though consider it moving out of inside useEffect
+  useEffect(() => {
+    if (!chrome.storage.onChanged.hasListener(stateWasUpdatedFromBackground)) {
+      chrome.storage.onChanged.addListener(stateWasUpdatedFromBackground);
+    }
+  }, [])
+
+  function enableSwitchWasChanged() {
+    chrome.storage.local.set({ enabled: !enabled });
+    setEnabled(enabled => !enabled);
+  }
+
+  function siteWasDisabled() {
+    const { hostname } = parseUrl(props.currentUrl);
+    chrome.storage.local.set({ enabledHosts: enabledHosts.filter(site => site !== hostname) });
+    setEnabledHosts(enabledHosts => enabledHosts.filter(site => site !== hostname));
+  }
+
+  function siteWasEnabled() {
+    const { hostname } = parseUrl(props.currentUrl);
+    chrome.storage.local.set({ enabledHosts: enabledHosts.concat(hostname) });
+    setEnabledHosts(enabledHosts => enabledHosts.concat(hostname))
+  }
+
+  function enabledHostsWasChanged(_, { value }) {
+    chrome.storage.local.set({ enabledHosts: value.split('\n') })
+    setEnabledHosts(value.split('\n'));
+  }
+
+  function convertBwWasChanged() {
+    chrome.storage.local.set({ convertBw: !convertBw });
+    setconvertBw(convertBw => !convertBw);
+  }
+
+  function compressionLevelWasChanged(_, { value }) {
+    chrome.storage.local.set({ compressionLevel: value });
+    setcompressionLevel(value);
+  }
+
   return (
     <Router>
       <div>
@@ -93,15 +94,15 @@ export default function Popup(props) {
             <Home
               enabled={enabled}
               statistics={statistics}
-              disabledHosts={disabledHosts}
+              enabledHosts={enabledHosts}
               convertBw={convertBw}
               compressionLevel={compressionLevel}
               isWebpSupported={isWebpSupported}
               proxyUrl={proxyUrl}
               currentUrl={props.currentUrl}
-              onSiteDisable={siteWasDisabled}
               onSiteEnable={siteWasEnabled}
-              disabledOnChange={disabledHostsWasChanged}
+              onSiteDisable={siteWasDisabled}
+              enabledOnChange={enabledHostsWasChanged}
               convertBwOnChange={convertBwWasChanged}
               compressionLevelOnChange={compressionLevelWasChanged}
             />

@@ -5,7 +5,7 @@ export default {
     bytesProcessed: 0,
     bytesSaved: 0
   },
-  disabledHosts: [],
+  enabledHosts: [],
   convertBw: true,
   compressionLevel: 40,
   proxyUrl: '',

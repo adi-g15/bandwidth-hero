@@ -1,13 +1,13 @@
 import React from 'react'
 import { Segment, Accordion, Icon } from 'semantic-ui-react'
-import ManageDisabled from './ManageDisabled'
+import ManageEnabled from './ManageEnabled'
 import CompressionSettings from './CompressionSettings'
 
 export default ({
-  disabledHosts,
+  enabledHosts,
   convertBw,
   compressionLevel,
-  disabledOnChange,
+  enabledOnChange,
   convertBwOnChange,
   isWebpSupported,
   compressionLevelOnChange
@@ -17,10 +17,10 @@ export default ({
       <Accordion>
         <Accordion.Title>
           <Icon name="dropdown" />
-          Manage disabled sites
+          Manage enabled sites
         </Accordion.Title>
         <Accordion.Content>
-          <ManageDisabled disabledHosts={disabledHosts} onChange={disabledOnChange} />
+          <ManageEnabled enabledHosts={enabledHosts} onChange={enabledOnChange} />
         </Accordion.Content>
         <Accordion.Title>
           <Icon name="dropdown" />

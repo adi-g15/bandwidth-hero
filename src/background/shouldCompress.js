@@ -2,23 +2,16 @@ import isImage from 'is-image';
 import isPrivateNetwork from './isPrivateNetwork';
 import parseUrl from '../utils/parseUrl';
 
-export default ({ imageUrl, pageUrl, compressed, proxyUrl, disabledHosts, enabled, type = 'image' }) => {
+export default ({ imageUrl, hostUrl, compressed, proxyUrl, enabledHosts, enabled, type = 'image' }) => {
   imageUrl = imageUrl.replace('#bh-no-compress=1', '');
 
   // If we aren't enabled we don't have to do anything.
   if (!enabled) {
-    return false;
+        return false;
   }
 
   // If we don't have an proxy URL we can't compress.
   if (proxyUrl === '') {
-    return false;
-  }
-
-  // Do not compress using the legacy proxy service. This proxy was default in
-  // earlier versions of the extension and filled in by default. So for legacy
-  // reasons we need to check for this.
-  if (/compressor\.bandwidth-hero\.com/i.test(proxyUrl)) {
     return false;
   }
 
@@ -30,11 +23,11 @@ export default ({ imageUrl, pageUrl, compressed, proxyUrl, disabledHosts, enable
     return false;
   }
 
-  // Only process http or https other protocols including base64 encode URLs are
+  // Only process http or https; other protocols including base64 encode URLs are
   // not supported.
-  const isHttps = imageUrl.toLowerCase().startsWith('https://') ||
+  const isHttp = imageUrl.toLowerCase().startsWith('https://') ||
                   imageUrl.toLowerCase().startsWith('http://');
-  if (!isHttps) {
+  if (!isHttp) {
     return false;
   }
 
@@ -47,35 +40,44 @@ export default ({ imageUrl, pageUrl, compressed, proxyUrl, disabledHosts, enable
   // request is our own redirect and shouldn't be processed.
   const cleanImageUrl = stripQueryStringAndHashFromPath(imageUrl);
   if (cleanImageUrl.startsWith(proxyUrl)) {
-    return false;
+        return false;
   }
 
-  // Local images aren't accessible for out proxy.
+  // Local images aren't accessible for our proxy.
   if (isPrivateNetwork(imageUrl)) {
-    return false;
+        return false;
   }
 
-  // If the host of the page or image is disabled then do nothing.
-  if (disabledHosts.includes(pageUrl)) {
-    return false;
+  // If the host of the page or image is NOT enabled then return.
+  if (!enabledHosts.includes(hostUrl)) {
+        return false;
   }
 
-  // If the host of the page or image is disabled then do nothing.
-  const imageHost = parseUrl(cleanImageUrl).hostname;
-  if (disabledHosts.includes(imageHost)) {
-    return false;
-  }
+  /**
+   * BREAKING CHANGE - 
+   * 
+   * In the original repo of Bandwidth Hero, it is `enabled by default for all`
+   * 
+   * Since i changed it to `enabling is OPT IN`,
+   * 
+   * so here, we are fetching the image as long as we are on an ENABLED SITE (say i enable github.com, but then this if will block raw.githubcontent.com), Commenting and not removing to leave with this note here
+   */
+  // If the host of the page or image is NOT enabled then return.
+  // const imageHost = parseUrl(cleanImageUrl).hostname;
+  // if (!enabledHosts.includes(imageHost)) {
+  //     //   return false;
+  // }
 
   // Check if the image doesn't have an extension we can't compress.
   const notSupported = ['ico', 'svg'];
   const matched = notSupported.filter(ext => imageUrl.endsWith('.' + ext));
   if (matched.length > 0) {
-    return false;
+        return false;
   }
 
   // Do not process favicons. Those are too small to process most of the time.
   if (imageUrl.includes('favicon')) {
-    return false;
+        return false;
   }
 
   // Firefox will set some images behind a xmlhttprequest instead of
@@ -84,7 +86,7 @@ export default ({ imageUrl, pageUrl, compressed, proxyUrl, disabledHosts, enable
   // to only get images. But, do this only if the type of the request is
   // xmlhttprequest.
   if (type.toLowerCase() === 'xmlhttprequest' && !isImage(cleanImageUrl)) {
-    return false;
+        return false;
   }
 
   return true;

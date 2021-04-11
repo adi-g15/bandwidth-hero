@@ -1,13 +1,13 @@
 import React from 'react'
 import { Form, TextArea } from 'semantic-ui-react'
 
-export default ({ disabledHosts = [], onChange }) => {
+export default ({ enabledHosts = [], onChange }) => {
   return (
     <Form>
       <Form.Field
         control={TextArea}
         rows={4}
-        value={disabledHosts.join('\n')}
+        value={enabledHosts.join('\n')}
         onChange={onChange}
       />
     </Form>

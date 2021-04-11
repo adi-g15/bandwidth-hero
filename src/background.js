@@ -11,7 +11,7 @@ chrome.storage.local.get(storedState => {
     const compressed = new Set();
     let setupHasBeenOpened = false;
     let state = { ...defaultState, ...storedState };
-    let currentPageUrl = null;
+    let currentHostName = null;
     let currentPageProtocol = null;
 
     if (/compressor\.bandwidth-hero\.com/i.test(storedState.proxyUrl)) {
@@ -30,10 +30,10 @@ chrome.storage.local.get(storedState => {
     }
 
     /**
-     * Sets the icons based on the disabled parameter.
+     * Sets the icons based on the enabled parameter.
      */
     function setIcon() {
-        const isEnabled = state.enabled && !isDisabledSite();
+        const isEnabled = state.enabled && isEnabledSite();
         if (chrome.browserAction.setIcon) {
             chrome.browserAction.setIcon({
                 path: isEnabled ? "assets/icon-128.png" : "assets/icon-128-disabled.png"
@@ -42,26 +42,26 @@ chrome.storage.local.get(storedState => {
     }
 
     /**
-     * Checks if the proxy is disabled for the given url
+     * Checks if the proxy is enabled for the given url
      * @returns {boolean}
      */
-    function isDisabledSite() {
-        // If we don't have the URL or protocol we can't check if it is enabled.
-        if (!currentPageUrl || !currentPageProtocol) {
-            return true;
+    function isEnabledSite() {
+        // If we don't have the URL or protocol we can't check if it is enabled. By default we say it is disabled then
+        if (!currentHostName || !currentPageProtocol) {
+            return false;
         }
 
         // Check if the page is a http/https page.
         const supportedProtocols = ['http:', 'https:'];
         if (!supportedProtocols.includes(currentPageProtocol)) {
-            return true;
+            return false;
         }
 
         // We are disabled when on localhost or site is hosted on private IP.
-        if (isPrivateNetwork(currentPageUrl)) {
-            return true;
+        if (isPrivateNetwork(currentHostName)) {
+            return false;
         }
-        return state.disabledHosts.includes(currentPageUrl);
+        return state.enabledHosts.includes(currentHostName);
     }
 
     /**
@@ -86,7 +86,7 @@ chrome.storage.local.get(storedState => {
     function stateItemChanged(key, newValue) {
         switch (key) {
             case 'enabled':
-            case 'disabledHosts':
+            case 'enabledHosts':
                 setIcon(); // Update icon
                 break;
         }
@@ -95,7 +95,7 @@ chrome.storage.local.get(storedState => {
     function checkSetup() {
         if (!state.enabled) return;
         if (setupHasBeenOpened) return;
-        if (state.proxyUrl === '' || /compressor\.bandwidth-hero\.com/i.test(state.proxyUrl)) {
+        if (state.proxyUrl === '') {
             chrome.tabs.create({ url: 'setup.html' });
             setupHasBeenOpened = true;
         }
@@ -107,20 +107,25 @@ chrome.storage.local.get(storedState => {
 
     /**
      * Intercept image loading request and decide if we need to compress it.
+     * 
+     * @param
+     *  url - Destination resource url
+     *  documentUrl - The current page we are on
+     *  type - type of request ("xmlhttprequest" or "image" etc.)
      */
     function onBeforeRequestListener({ url, documentUrl, type }) {
         checkSetup();
 
-        // Occasionally currentPageUrl is not ready in time on FF
-        const pageUrl = currentPageUrl || parseUrl(documentUrl).host;
+        // Occasionally currentHostName is not ready in time on FF
+        const hostUrl = currentHostName || parseUrl(documentUrl).host;
 
         if (
             shouldCompress({
                 imageUrl: url,
-                pageUrl,
+                hostUrl,
                 compressed,
                 proxyUrl: state.proxyUrl,
-                disabledHosts: state.disabledHosts,
+                enabledHosts: state.enabledHosts,
                 enabled: state.enabled,
                 type
             })
@@ -205,7 +210,7 @@ chrome.storage.local.get(storedState => {
     function onTabActivated({tabId}) {
         chrome.tabs.get(tabId, tab => {
             const url = parseUrl(tab.url);
-            currentPageUrl = url.hostname;
+            currentHostName = url.hostname;
             currentPageProtocol = url.schema;
             compressed.clear(); // Reset our list of compressed images
             setIcon();

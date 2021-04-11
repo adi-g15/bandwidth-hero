@@ -1,17 +1,17 @@
 import React from 'react'
 import UsageStatistic from './UsageStatistic'
-import DisableButton from './DisableButton'
+import EnabledButton from './EnabledButton'
 import SettingsAccordion from './SettingsAccordion'
 
 export default function Home({
   statistics,
-  disabledHosts,
+  enabledHosts,
   currentUrl,
   compressionLevel,
   convertBw,
   onSiteDisable,
   onSiteEnable,
-  disabledOnChange,
+  enabledOnChange,
   convertBwOnChange,
   isWebpSupported,
   compressionLevelOnChange
@@ -23,18 +23,18 @@ export default function Home({
         bytesProcessed={statistics.bytesProcessed}
         bytesSaved={statistics.bytesSaved}
       />
-      <DisableButton
-        disabledHosts={disabledHosts}
+      <EnabledButton
+        enabledHosts={enabledHosts}
         currentUrl={currentUrl}
         onSiteDisable={onSiteDisable}
         onSiteEnable={onSiteEnable}
       />
       <SettingsAccordion
-        disabledHosts={disabledHosts}
+        enabledHosts={enabledHosts}
         convertBw={convertBw}
         isWebpSupported={isWebpSupported}
         compressionLevel={compressionLevel}
-        disabledOnChange={disabledOnChange}
+        enabledOnChange={enabledOnChange}
         convertBwOnChange={convertBwOnChange}
         compressionLevelOnChange={compressionLevelOnChange}
       />
