@@ -12,10 +12,6 @@ When you use "Bandwidth Hero" browser extension it forwards all images loading
 requests to the data compression service, including images from secure and
 authenticated web pages (e.g. Facebook, Twitter etc).
 
-By default this extension uses public data compression service URL:
-
-`https://compressor.bandwidth-hero.com`
-
 This data compression service does not store downloaded images.
 It processes images on the fly, downloading them from original server and converting in memory.
 Server access logs (e.g. image URL, user IP address) might be stored on the server.
