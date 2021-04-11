@@ -13,7 +13,6 @@ return{
     popup: './src/popup.js',
     setup: './src/setup.js',
     background: './src/background.js',
-    update: './src/update.js'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

@@ -14,10 +14,6 @@ chrome.storage.local.get(storedState => {
     let currentHostName = null;
     let currentPageProtocol = null;
 
-    if (/compressor\.bandwidth-hero\.com/i.test(storedState.proxyUrl)) {
-        chrome.storage.local.set({ ...storedState, proxyUrl: '' })
-    }
-
     checkWebpSupport().then(isSupported => {
         chrome.storage.local.set({ ...storedState, isWebpSupported: isSupported })
     })

@@ -69,19 +69,13 @@ export default class Setup extends React.Component {
         <Header />
         <Segment basic attached>
           <Message icon warning>
-            <Icon name="power cord" />
+            <Icon name="info" />
             <Message.Content>
               <Message.Header>
-                Public data compression service shutdown
+                This is the service (API) used to compress your images
               </Message.Header>
               <p>
-                Due to increased load and complains from ISP we are shutting
-                down public data compression service under{' '}
-                <strong>https://compressor.bandwidth-hero.com</strong>
-              </p>
-              <p>
-                You can continue using extension and save data by installing
-                your own service.
+                The installation guide section lists some easy ways to deploy yours, netlify and heroku both on free plans.
               </p>
             </Message.Content>
           </Message>
@@ -123,6 +117,31 @@ export default class Setup extends React.Component {
           <h3>Installation Guide</h3>
           <Accordion fluid styled>
             <Accordion.Title>
+              <Icon name="dropdown" /> Netlify Functions (Recommended)
+            </Accordion.Title>
+            <Accordion.Content>
+              <p>
+                Netlify is a hosting website, and Netlify Functions are serverless functions that are good substitute for a server setup in some cases (like this one)<br />
+                Their free plan gives you a quota of 1,25,000 requests per month, and 100 GB per month bandwidth (Don't fear it won't ask credit card details :D )
+
+                More details at https://github.com/adi-g15/bandwidth-hero-proxy
+              </p>
+              <p>
+                Click the button bellow to deploy to Netlify for free.
+              </p>
+              <a
+                href="https://app.netlify.com/start/deploy?repository=https://github.com/adi-g15/bandwidth-hero-proxy"
+                rel="nofollow"
+                target="_blank"
+              >
+                <img
+                  src="https://www.netlify.com/img/deploy/button.svg"
+                  alt="Deploy to Netlify"
+                />
+              </a>
+            </Accordion.Content>
+
+            <Accordion.Title>
               <Icon name="dropdown" /> Heroku
             </Accordion.Title>
             <Accordion.Content>
@@ -133,7 +152,7 @@ export default class Setup extends React.Component {
               </p>
               <p>
                 Click the button bellow to deploy an instance of compression
-                service to Heroku.
+                service to Heroku for free.
               </p>
               <a
                 href="https://heroku.com/deploy?template=https://github.com/ayastreb/bandwidth-hero-proxy"
@@ -141,22 +160,11 @@ export default class Setup extends React.Component {
                 target="_blank"
               >
                 <img
-                  src="https://camo.githubusercontent.com/83b0e95b38892b49184e07ad572c94c8038323fb/68747470733a2f2f7777772e6865726f6b7563646e2e636f6d2f6465706c6f792f627574746f6e2e737667"
-                  alt="Deploy"
+                  src="https://www.herokucdn.com/deploy/button.svg"
+                  alt="Deploy to Heroku"
                   data-canonical-src="https://www.herokucdn.com/deploy/button.svg"
                 />
               </a>
-              <p style={{ marginTop: '1em' }}>
-                <iframe
-                  width="580"
-                  height="335"
-                  src="https://www.youtube.com/embed/y3tkYEXAics"
-                  frameborder="0"
-                  gesture="media"
-                  allow="encrypted-media"
-                  allowfullscreen
-                />
-              </p>
             </Accordion.Content>
 
             <Accordion.Title>
@@ -164,6 +172,10 @@ export default class Setup extends React.Component {
             </Accordion.Title>
             <Accordion.Content>
               <p>
+                This is more advanced than above options
+                <br/>
+                Head over to <a href="https://github.com/ayastreb/bandwidth-hero-proxy">https://github.com/ayastreb/bandwidth-hero-proxy</a>
+                <br/>
                 Data compression service is a Node.js app which you can run on
                 any server that supports Node.js. Check out{' '}
                 <a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04">

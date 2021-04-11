@@ -1,6 +1,11 @@
 ![Bandwidth Hero](https://raw.githubusercontent.com/ayastreb/bandwidth-hero/master/src/assets/logo.png)
 
-Just an updated fork of the [original repo](https://github.com/ayastreb/bandwidth-hero)
+This fork has the compression "Disabled by default", instead of Enabled By default.
+Consider this in the original extension, that you have added some wallpaper site to disabledHost, all fine, but you have to login using google oauth, have you noticed your pic is greyed out (that is if you chose grayscale conversion)
+
+I wanted to change this behaviour, since I mostly need it for manga reading websites, so it should grey out or compress the images everywhere
+
+> It has done a great job, saving up about 2 GB in 2.6k compressions (Thanks to @ayastreb)
 
 [![Build Status](https://travis-ci.org/ayastreb/bandwidth-hero.svg?branch=master)](https://travis-ci.org/ayastreb/bandwidth-hero)
 

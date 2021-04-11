@@ -5,12 +5,12 @@
   "description": "Saves data by compressing images on the page.",
   "version": "3.5.1",
   "browser_action": {
-    "default_icon": "assets/doge.png",
+    "default_icon": "assets/icon-doge.png",
     "default_title": "Data Saver",
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["update.bundle.js", "background.bundle.js"]
+    "scripts": ["background.bundle.js"]
   },
   "permissions": [
     "activeTab",

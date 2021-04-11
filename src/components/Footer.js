@@ -15,7 +15,7 @@ export default function Footer() {
         basic
         href="https://github.com/adi-g15/bandwidth-hero"
         target="_blank"
-        content="Repo"
+        content="Repository"
         positive
       />
     </Container>
