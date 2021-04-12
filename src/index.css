@@ -4,6 +4,12 @@ body.popup {
   height: auto;
 }
 
+.center_element {
+  align-items: center;
+  margin: 0 auto;
+  /* ie. top and bottom margin is 0, left right auto */
+}
+
 .ui.toggle.checkbox .box:before,
 .ui.toggle.checkbox label:before {
   background: rgba(0, 0, 0, 0.15);

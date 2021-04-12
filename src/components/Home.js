@@ -9,6 +9,8 @@ export default function Home({
   currentUrl,
   compressionLevel,
   convertBw,
+  enabledAll,
+  allSitesChanged,
   onSiteDisable,
   onSiteEnable,
   enabledOnChange,
@@ -24,6 +26,8 @@ export default function Home({
         bytesSaved={statistics.bytesSaved}
       />
       <EnabledButton
+        enabledAll={enabledAll}
+        allSitesChanged={allSitesChanged}
         enabledHosts={enabledHosts}
         currentUrl={currentUrl}
         onSiteDisable={onSiteDisable}

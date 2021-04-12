@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "Data Saver - port of Bandwidth-Hero",
-  "short_name": "Data Saver",
+  "name": "Bandwidth Hero++",
+  "short_name": "Bandwidth Hero++",
   "description": "Saves data by compressing images on the page.",
-  "version": "3.5.1",
+  "version": "3.1.1",
   "browser_action": {
     "default_icon": "assets/icon-doge.png",
-    "default_title": "Data Saver",
+    "default_title": "Bandwidth Hero++",
     "default_popup": "popup.html"
   },
   "background": {

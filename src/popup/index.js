@@ -13,7 +13,7 @@ export default function Popup(props) {
   const [compressionLevel, setcompressionLevel] = useState(props.compressionLevel);
   const [isWebpSupported, setisWebpSupported] = useState(props.isWebpSupported);
   const [proxyUrl, setproxyUrl] = useState(props.proxyUrl);
-
+  const [enableAll, setEnableAll] = useState(props.enableAll);
 
   /**
  * Receive state changes from background process and update UI.
@@ -67,6 +67,11 @@ export default function Popup(props) {
     setEnabledHosts(enabledHosts => enabledHosts.concat(hostname))
   }
 
+  function allSitesChanged() {
+    chrome.storage.local.set({enableAll: !enableAll});
+    setEnableAll(enableAll => !enableAll);
+  }
+
   function enabledHostsWasChanged(_, { value }) {
     chrome.storage.local.set({ enabledHosts: value.split('\n') })
     setEnabledHosts(value.split('\n'));
@@ -93,6 +98,8 @@ export default function Popup(props) {
             <Home
               enabled={enabled}
               statistics={statistics}
+              enableAll={enableAll} // this takes precedence over enabledHosts
+              allSitesChanged={allSitesChanged}
               enabledHosts={enabledHosts}
               convertBw={convertBw}
               compressionLevel={compressionLevel}
